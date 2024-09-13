@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "686062898858",
+    "project_id": "blissapp-1464d",
+    "storage_bucket": "blissapp-1464d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686062898858:android:334f5bf9f7091cf140cad3",
+        "android_client_info": {
+          "package_name": "com.bliss"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686062898858-u1eebbtljnvfpbkcqpd80fsmq037747l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bliss",
+            "certificate_hash": "ff5b3bb43266abdec8ccbb8c8e97c9cac897bbb4"
+          }
+        },
+        {
+          "client_id": "686062898858-jiph5n32r1ihvoborp5o2goj3aadoo2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7wyxBD_btdmlRp2JFZ4OAfxrpr7mr6nk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686062898858-jiph5n32r1ihvoborp5o2goj3aadoo2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,38 +1,39 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, Button, TextInput, StyleSheet, Image } from 'react-native';
 import Sound from 'react-native-sound';
-import KeepAwake from 'react-native-keep-awake'; // Import the older version of KeepAwake
+import KeepAwake from 'react-native-keep-awake';
+import { signInWithGoogle, signUpWithEmail, signInWithEmail, onAuthStateChanged } from './authService'; // Import authService
 
 const App: React.FC = () => {
-  let [delay, setDelay] = useState<number>(1000); // Initial trance gap in milliseconds
+  // Existing meditation state
+  const [delay, setDelay] = useState<number>(1000);
   const [started, setStarted] = useState<boolean>(false);
-  const [isCountingDown, setIsCountingDown] = useState<boolean>(false); // Track countdown state
-  const [countdown, setCountdown] = useState<number>(10); // Countdown timer
-  const [totalDuration, setTotalDuration] = useState<number>(0); // Track meditation duration
-  const [currentDelay, setCurrentDelay] = useState<number>(0); // Current trance gap for display
+  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(10);
+  const [totalDuration, setTotalDuration] = useState<number>(0);
+  const [currentDelay, setCurrentDelay] = useState<number>(0);
   const startTimeRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Store the timeout for stopping
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const audio = useRef<Sound>(
     new Sound(require('./assets/bell-a-99888.mp3'), Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.error('Failed to load the sound', error);
-      }
+      if (error) console.error('Failed to load the sound', error);
     })
   ).current;
 
-  // Prevent the screen from locking during the session
+  // Authentication state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
+
+  // Monitor authentication state
   useEffect(() => {
-    if (started) {
-      KeepAwake.activate(); // Prevent the screen from locking
-    }
+    const subscriber = onAuthStateChanged((user) => {
+      setUser(user);
+    });
+    return subscriber; // Unsubscribe on unmount
+  }, []);
 
-    // Clean up after session ends
-    return () => {
-      KeepAwake.deactivate(); // Allow screen lock after the session
-    };
-  }, [started]);
-
-  // Countdown logic
+  // Meditation countdown logic
   useEffect(() => {
     let countdownTimer: NodeJS.Timeout;
     if (isCountingDown && countdown > 0) {
@@ -48,9 +49,9 @@ const App: React.FC = () => {
   // Start Meditation after countdown finishes
   const handleStartMeditation = () => {
     setStarted(true);
-    setCurrentDelay(delay / 1000); // Display initial trance gap in seconds
+    setCurrentDelay(delay / 1000);
     startTimeRef.current = Date.now();
-    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay); // Set initial timeout
+    timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
   };
 
   // Play sound and increase trance gap gradually
@@ -58,66 +59,66 @@ const App: React.FC = () => {
     if (audio) {
       audio.setCurrentTime(0);
       audio.play();
-
-      delay = delay * 1.05; // Increase delay by 5%
-      setDelay(delay);
-
+      setDelay(delay * 1.05);
       const now = Date.now();
-      setTotalDuration(now - startTimeRef.current); // Update meditation duration
-      setCurrentDelay(delay / 1000); // Update displayed trance gap
-
-      // Schedule the next sound after the updated delay
+      setTotalDuration(now - startTimeRef.current);
+      setCurrentDelay(delay / 1000);
       timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
     }
   };
 
-  // Start countdown
-  const handleStart = () => {
-    setIsCountingDown(true);
-  };
+  const handleStart = () => setIsCountingDown(true);
 
-  // Stop the meditation and reset everything
   const handleStop = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current); // Clear any ongoing timeouts
-    }
-    audio.stop(); // Stop any ongoing sound
-    setStarted(false); // Reset started state
-    setIsCountingDown(false); // Ensure countdown does not restart
-    setCountdown(10); // Reset countdown to 10 seconds
-    setTotalDuration(0); // Reset meditation duration
-    setCurrentDelay(0); // Reset trance gap
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    audio.stop();
+    setStarted(false);
+    setIsCountingDown(false);
+    setCountdown(10);
+    setTotalDuration(0);
+    setCurrentDelay(0);
     setDelay(1000);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        {/* Add logo at the top */}
-        <Image source={require('./assets/logo.png')} style={styles.logo} />
-      </View>
-      {isCountingDown && countdown > 0 ? (
-        <View style={styles.countdown}>
-          <Text style={styles.text}>Meditation starts in {countdown}...</Text>
+      {!user ? (
+        <View>
+          <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} />
+          <TextInput placeholder="Password" value={password} onChangeText={setPassword} style={styles.input} secureTextEntry />
+          <Button title="Sign Up with Email" onPress={() => signUpWithEmail(email, password)} />
+          <Button title="Login with Email" onPress={() => signInWithEmail(email, password)} />
+          <Button title="Sign in with Google" onPress={signInWithGoogle} />
         </View>
       ) : (
         <>
-          {started ? (
-            <View style={styles.meditationInfo}>
-              <Text style={styles.text}>Trance gap: {currentDelay.toFixed(2)} seconds</Text>
-              <Text style={styles.text}>Meditation duration: {(totalDuration / 1000).toFixed(2)} seconds</Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={handleStop} style={styles.stopButton}>
-                  <Text style={styles.buttonText}>Stop</Text>
-                </TouchableOpacity>
-              </View>
+          <View style={styles.imageContainer}>
+            <Image source={require('./assets/logo.png')} style={styles.logo} />
+          </View>
+          {isCountingDown && countdown > 0 ? (
+            <View style={styles.countdown}>
+              <Text style={styles.text}>Meditation starts in {countdown}...</Text>
             </View>
           ) : (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={handleStart} style={styles.startButton}>
-                <Text style={styles.buttonText}>Start Meditation</Text>
-              </TouchableOpacity>
-            </View>
+            <>
+              {started ? (
+                <View style={styles.meditationInfo}>
+                  <Text style={styles.text}>Trance gap: {currentDelay.toFixed(2)} seconds</Text>
+                  <Text style={styles.text}>Meditation duration: {(totalDuration / 1000).toFixed(2)} seconds</Text>
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={handleStop} style={styles.stopButton}>
+                      <Text style={styles.buttonText}>Stop</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={handleStart} style={styles.startButton}>
+                    <Text style={styles.buttonText}>Start Meditation</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
           )}
         </>
       )}
@@ -130,18 +131,18 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start', // Align content to the top
-    alignItems: 'center', // Center the logo horizontally
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     backgroundColor: '#6e8efb',
-    paddingTop: 50, // Add space at the top
+    paddingTop: 50,
   },
   imageContainer: {
-    paddingBottom: 150
+    paddingBottom: 150,
   },
   logo: {
     width: 200,
     height: 200,
-    borderRadius: 100, // Round corners
+    borderRadius: 100,
     resizeMode: 'contain',
   },
   text: {
@@ -189,5 +190,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#6e8efb',
     fontWeight: 'bold',
+  },
+  input: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 15,
+    paddingLeft: 10,
   },
 });
