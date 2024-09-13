@@ -124,9 +124,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:33.3.0')
-
+    
     // Add Firebase SDK for Analytics (optional)
     implementation 'com.google.firebase:firebase-analytics'
 

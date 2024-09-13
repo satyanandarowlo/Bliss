@@ -23,15 +23,15 @@ const App: React.FC = () => {
   // Authentication state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('test');
 
   // Monitor authentication state
-  useEffect(() => {
-    const subscriber = onAuthStateChanged((user) => {
-      setUser(user);
-    });
-    return subscriber; // Unsubscribe on unmount
-  }, []);
+  // useEffect(() => {
+  //   const subscriber = onAuthStateChanged((user) => {
+  //     setUser(user);
+  //   });
+  //   return subscriber; // Unsubscribe on unmount
+  // }, []);
 
   // Meditation countdown logic
   useEffect(() => {

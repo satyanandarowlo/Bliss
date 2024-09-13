@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "686062898858-u1eebbtljnvfpbkcqpd80fsmq037747l.apps.googleusercontent.com",
+          "client_id": "686062898858-4f5a2d63gf60anhaov0ukiq33pni8raq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bliss",
-            "certificate_hash": "ff5b3bb43266abdec8ccbb8c8e97c9cac897bbb4"
+            "certificate_hash": "447cbd0eed54878875b88c0045bd7339dcfb7a82"
           }
         },
         {
