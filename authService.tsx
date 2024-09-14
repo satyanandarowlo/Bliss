@@ -3,7 +3,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 // Google Sign-In Configuration
 GoogleSignin.configure({
-    webClientId: '686062898858-jiph5n32r1ihvoborp5o2goj3aadoo2f.apps.googleusercontent.com', // Add the Web Client ID from Firebase Console
+    webClientId: '686062898858-nb2aqa81921gviburvc2pq9gssnrbkek.apps.googleusercontent.com', // Add the Web Client ID from Firebase Console
 });
 
 // Function for Google Sign-In
@@ -11,7 +11,8 @@ export const signInWithGoogle = async () => {
   try {
     await GoogleSignin.hasPlayServices(); // Ensure Google Play Services are available
     const userInfo = await GoogleSignin.signIn();
-    const { idToken } = userInfo; // Get the idToken
+    const idToken = userInfo?.user?.idToken || userInfo?.data?.idToken; // Access idToken from userInfo
+    console.log("User Data: ",userInfo);
 
     // Use the idToken to authenticate with Firebase
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);

@@ -1,4 +1,4 @@
-package com.bliss
+package com.meditation.bliss
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

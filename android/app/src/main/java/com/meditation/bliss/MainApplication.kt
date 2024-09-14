@@ -1,4 +1,4 @@
-package com.bliss
+package com.meditation.bliss
 
 import android.app.Application
 import com.facebook.react.PackageList

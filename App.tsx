@@ -6,7 +6,7 @@ import { signInWithGoogle, signUpWithEmail, signInWithEmail, onAuthStateChanged 
 
 const App: React.FC = () => {
   // Existing meditation state
-  const [delay, setDelay] = useState<number>(1000);
+  let [delay, setDelay] = useState<number>(1000);
   const [started, setStarted] = useState<boolean>(false);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(10);
@@ -23,15 +23,15 @@ const App: React.FC = () => {
   // Authentication state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState('test');
+  const [user, setUser] = useState('');
 
   // Monitor authentication state
-  // useEffect(() => {
-  //   const subscriber = onAuthStateChanged((user) => {
-  //     setUser(user);
-  //   });
-  //   return subscriber; // Unsubscribe on unmount
-  // }, []);
+  useEffect(() => {
+    const subscriber = onAuthStateChanged((user) => {
+      setUser(user);
+    });
+    return subscriber; // Unsubscribe on unmount
+  }, []);
 
   // Meditation countdown logic
   useEffect(() => {
@@ -59,10 +59,15 @@ const App: React.FC = () => {
     if (audio) {
       audio.setCurrentTime(0);
       audio.play();
-      setDelay(delay * 1.05);
+
+      delay = delay * 1.05; // Increase delay by 5%
+      setDelay(delay);
+
       const now = Date.now();
-      setTotalDuration(now - startTimeRef.current);
-      setCurrentDelay(delay / 1000);
+      setTotalDuration(now - startTimeRef.current); // Update meditation duration
+      setCurrentDelay(delay / 1000); // Update displayed trance gap
+
+      // Schedule the next sound after the updated delay
       timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
     }
   };

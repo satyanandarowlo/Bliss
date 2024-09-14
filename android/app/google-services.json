@@ -7,22 +7,38 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:686062898858:android:334f5bf9f7091cf140cad3",
+        "mobilesdk_app_id": "1:686062898858:android:8ce8d167b3b269a440cad3",
         "android_client_info": {
-          "package_name": "com.bliss"
+          "package_name": "com.meditation.bliss"
         }
       },
       "oauth_client": [
         {
-          "client_id": "686062898858-4f5a2d63gf60anhaov0ukiq33pni8raq.apps.googleusercontent.com",
+          "client_id": "686062898858-0ic33bkiuuh7hd1gnaf85sre9gc2ksh4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.bliss",
+            "package_name": "com.meditation.bliss",
+            "certificate_hash": "ff5b3bb43266abdec8ccbb8c8e97c9cac897bbb4"
+          }
+        },
+        {
+          "client_id": "686062898858-hk08u8sgq0dd76g5isej1vb65s96v2fh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meditation.bliss",
             "certificate_hash": "447cbd0eed54878875b88c0045bd7339dcfb7a82"
           }
         },
         {
-          "client_id": "686062898858-jiph5n32r1ihvoborp5o2goj3aadoo2f.apps.googleusercontent.com",
+          "client_id": "686062898858-jmoh6ue02nc0rtll4h3kohp1gdliq2g4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meditation.bliss",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "686062898858-nb2aqa81921gviburvc2pq9gssnrbkek.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
