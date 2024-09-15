@@ -6,6 +6,15 @@ GoogleSignin.configure({
     webClientId: '686062898858-nb2aqa81921gviburvc2pq9gssnrbkek.apps.googleusercontent.com', // Add the Web Client ID from Firebase Console
 });
 
+// Function to log out the current user
+export const signOut = async () => {
+  try {
+    await auth().signOut();
+  } catch (error) {
+    console.error('Error signing out: ', error);
+  }
+};
+
 // Function for Google Sign-In
 export const signInWithGoogle = async () => {
   try {
