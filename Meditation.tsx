@@ -53,7 +53,7 @@ const Meditation: React.FC = () => {
   // Function to play binaural beats
   const playBinauralBeats = () => {
     // Call the native function to start playing the binaural beats
-    BinauralBeats.playBinauralBeats(100,4,3600); // Base frequency 440 Hz, beat frequency 4 Hz
+    BinauralBeats.playBinauralBeats(100,4,120); // Base frequency 440 Hz, beat frequency 4 Hz
   };
 
   // Function to stop binaural beats
@@ -133,8 +133,8 @@ const Meditation: React.FC = () => {
               <TouchableOpacity onPress={handleStart} style={styles.startButton}>
                 <Text style={styles.buttonText}>Start Meditation</Text>
               </TouchableOpacity>
-              {/* <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
-              <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} /> */}
+              <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
+              <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} /> 
 
             </View>
           )}
@@ -150,17 +150,17 @@ export default Meditation;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start', // Align content to the top
-    alignItems: 'center', // Center the logo horizontally
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     backgroundColor: '#6e8efb',
-    paddingTop: 50, // Add space at the top
+    paddingTop: 50,
   },
   logo: {
     width: 200,
     height: 200,
-    borderRadius: 100, // Round corners
+    borderRadius: 100,
     resizeMode: 'contain',
-    marginBottom: 30, // Add margin below the logo
+    marginBottom: 30,
   },
   text: {
     fontSize: 24,
@@ -179,8 +179,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
-    marginTop: 150,
+    marginTop: 30, // Add space at the top
   },
   startButton: {
     backgroundColor: '#fff',
@@ -191,6 +190,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
+    marginBottom: 20, // Add space between buttons
   },
   stopButton: {
     backgroundColor: '#ff5252',
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    marginLeft: 20,
+    marginBottom: 20, // Add space between buttons
   },
   buttonText: {
     fontSize: 20,
@@ -209,3 +209,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
