@@ -6,7 +6,7 @@ import Meditation from './Meditation'; // Meditation component
 
 const App: React.FC = () => {
   const [user, setUser] = useState('');
-
+  
   // Monitor authentication state
   useEffect(() => {
     const subscriber = onAuthStateChanged((user) => {

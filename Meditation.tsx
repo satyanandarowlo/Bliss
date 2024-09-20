@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Button, View, Text, TouchableOpacity, StyleSheet, Image, NativeModules } from 'react-native';
+const { BinauralBeats } = NativeModules;
+
 import Sound from 'react-native-sound';
 import KeepAwake from 'react-native-keep-awake';
 
@@ -46,6 +48,18 @@ const Meditation: React.FC = () => {
     }
     return () => clearTimeout(countdownTimer);
   }, [countdown, isCountingDown]);
+
+  // Function to play binaural beats
+  const playBinauralBeats = () => {
+    // Call the native function to start playing the binaural beats
+    BinauralBeats.playBinauralBeats(100); // Base frequency 440 Hz, beat frequency 4 Hz
+  };
+
+  // Function to stop binaural beats
+  const stopBinauralBeats = () => {
+    // Call the native function to stop playing the binaural beats
+    BinauralBeats.stopBinauralBeats();
+  };
 
   // Start Meditation after countdown finishes
   const handleStartMeditation = () => {
@@ -118,6 +132,9 @@ const Meditation: React.FC = () => {
               <TouchableOpacity onPress={handleStart} style={styles.startButton}>
                 <Text style={styles.buttonText}>Start Meditation</Text>
               </TouchableOpacity>
+              <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
+              <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} />
+
             </View>
           )}
         </>
