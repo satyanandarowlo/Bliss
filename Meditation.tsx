@@ -1,18 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, View, Text, TouchableOpacity, StyleSheet, Image, NativeModules } from 'react-native';
+import { Button, View, Text, TouchableOpacity, StyleSheet, Image, NativeModules, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker'; // Import Picker
 const { BinauralBeats } = NativeModules;
 
 import Sound from 'react-native-sound';
 import KeepAwake from 'react-native-keep-awake';
 
-// Define the meditation component
 const Meditation: React.FC = () => {
-  let [delay, setDelay] = useState<number>(1000); // Initial trance gap in milliseconds
+  const [delay, setDelay] = useState<number>(1000); // Initial trance gap in milliseconds
   const [started, setStarted] = useState<boolean>(false);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(10); // Countdown timer
   const [totalDuration, setTotalDuration] = useState<number>(0); // Track meditation duration
   const [currentDelay, setCurrentDelay] = useState<number>(0); // Current trance gap for display
+  const [baseFrequency, setBaseFrequency] = useState<number>(100); // Base frequency default
+  const [beatFrequency, setBeatFrequency] = useState<number>(4); // Beat frequency default
+  const [duration, setDuration] = useState<number>(120); // Duration default
   const startTimeRef = useRef<number>(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Store the timeout for stopping
 
@@ -30,7 +33,6 @@ const Meditation: React.FC = () => {
     if (started) {
       KeepAwake.activate(); // Prevent the screen from locking
     }
-
     return () => {
       KeepAwake.deactivate(); // Allow screen lock after the session
     };
@@ -45,27 +47,24 @@ const Meditation: React.FC = () => {
       }, 1000);
     } else if (countdown === 0) {
       handleStartMeditation();
-      // playBinauralBeats();
     }
     return () => clearTimeout(countdownTimer);
   }, [countdown, isCountingDown]);
 
   // Function to play binaural beats
   const playBinauralBeats = () => {
-    // Call the native function to start playing the binaural beats
-    BinauralBeats.playBinauralBeats(100,4,120); // Base frequency 440 Hz, beat frequency 4 Hz
+    BinauralBeats.playBinauralBeats(baseFrequency, beatFrequency, duration); 
   };
 
   // Function to stop binaural beats
   const stopBinauralBeats = () => {
-    // Call the native function to stop playing the binaural beats
     BinauralBeats.stopBinauralBeats();
   };
 
   // Start Meditation after countdown finishes
   const handleStartMeditation = () => {
     setStarted(true);
-    setCurrentDelay(delay / 1000); // Display initial trance gap in seconds
+    setCurrentDelay(delay / 1000); 
     startTimeRef.current = Date.now();
     timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
   };
@@ -75,15 +74,10 @@ const Meditation: React.FC = () => {
     if (audio) {
       audio.setCurrentTime(0);
       audio.play();
-
-      delay = delay * 1.05; // Increase delay by 5%
-      setDelay(delay);
-
+      setDelay(delay * 1.05);
       const now = Date.now();
-      setTotalDuration(now - startTimeRef.current); // Update meditation duration
-      setCurrentDelay(delay / 1000); // Update displayed trance gap
-
-      // Schedule the next sound after the updated delay
+      setTotalDuration(now - startTimeRef.current); 
+      setCurrentDelay(delay / 1000); 
       timeoutRef.current = setTimeout(playSoundAndIncreaseDelay, delay);
     }
   };
@@ -96,51 +90,91 @@ const Meditation: React.FC = () => {
   // Stop the meditation and reset everything
   const handleStop = () => {
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current); // Clear any ongoing timeouts
+      clearTimeout(timeoutRef.current); 
     }
-    audio.stop(); // Stop any ongoing sound
-    setStarted(false); // Reset started state
-    setIsCountingDown(false); // Ensure countdown does not restart
-    setCountdown(10); // Reset countdown to 10 seconds
-    setTotalDuration(0); // Reset meditation duration
-    setCurrentDelay(0); // Reset trance gap
-    setDelay(1000); // Reset delay
+    audio.stop(); 
+    setStarted(false); 
+    setIsCountingDown(false); 
+    setCountdown(10); 
+    setTotalDuration(0); 
+    setCurrentDelay(0); 
+    setDelay(1000); 
   };
 
+  // Render dropdown options for base frequency, beat frequency, and duration
+  const renderPickerItems = (range: number[], step = 1) =>
+    range.map((value, index) => (
+      <Picker.Item key={index} label={`${value}`} value={value} />
+    ));
+
   return (
-    <View style={styles.container}>
-      {/* Add logo at the top */}
-      <Image source={require('./assets/logo.png')} style={styles.logo} />
+    <ScrollView contentContainerStyle={styles.scrollContainer}
+    showsVerticalScrollIndicator={false} 
+    >
+      <View style={styles.container}>
+        <Image source={require('./assets/logo.png')} style={styles.logo} />
 
-      {isCountingDown && countdown > 0 ? (
-        <View style={styles.countdown}>
-          <Text style={styles.text}>Meditation starts in {countdown}...</Text>
-        </View>
-      ) : (
-        <>
-          {started ? (
-            <View style={styles.meditationInfo}>
-              <Text style={styles.text}>Trance gap: {currentDelay.toFixed(2)} seconds</Text>
-              <Text style={styles.text}>Meditation duration: {(totalDuration / 1000).toFixed(2)} seconds</Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={handleStop} style={styles.stopButton}>
-                  <Text style={styles.buttonText}>Stop</Text>
-                </TouchableOpacity>
+        {isCountingDown && countdown > 0 ? (
+          <View style={styles.countdown}>
+            <Text style={styles.text}>Meditation starts in {countdown}...</Text>
+          </View>
+        ) : (
+          <>
+            {started ? (
+              <View style={styles.meditationInfo}>
+                <Text style={styles.text}>Trance gap: {currentDelay.toFixed(2)} seconds</Text>
+                <Text style={styles.text}>Meditation duration: {(totalDuration / 1000).toFixed(2)} seconds</Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={handleStop} style={styles.stopButton}>
+                    <Text style={styles.buttonText}>Stop</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          ) : (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={handleStart} style={styles.startButton}>
-                <Text style={styles.buttonText}>Start Meditation</Text>
-              </TouchableOpacity>
-              <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
-              <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} /> 
+            ) : (
+              <View>
+                {/* Base Frequency Picker */}
+                <Text style={styles.pickerLabel}>Base Frequency (Hz):</Text>
+                <Picker
+                  selectedValue={baseFrequency}
+                  onValueChange={(value) => setBaseFrequency(value)}
+                  style={styles.picker}
+                >
+                  {renderPickerItems(Array.from({ length: 35 }, (_, i) => 60 + i * 10))}
+                </Picker>
 
-            </View>
-          )}
-        </>
-      )}
-    </View>
+                {/* Beat Frequency Picker */}
+                <Text style={styles.pickerLabel}>Beat Frequency (Hz):</Text>
+                <Picker
+                  selectedValue={beatFrequency}
+                  onValueChange={(value) => setBeatFrequency(value)}
+                  style={styles.picker}
+                >
+                  {renderPickerItems(Array.from({ length: 40 }, (_, i) => 1 + i))}
+                </Picker>
+
+                {/* Duration Picker */}
+                <Text style={styles.pickerLabel}>Duration (seconds):</Text>
+                <Picker
+                  selectedValue={duration}
+                  onValueChange={(value) => setDuration(value)}
+                  style={styles.picker}
+                >
+                  {renderPickerItems(Array.from({ length: 120 }, (_, i) => 60 + i * 60))}
+                </Picker>
+
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={handleStart} style={styles.startButton}>
+                    <Text style={styles.buttonText}>Start Meditation</Text>
+                  </TouchableOpacity>
+                  <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
+                  <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} />
+                </View>
+              </View>
+            )}
+          </>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -148,6 +182,9 @@ export default Meditation;
 
 // Styles for the component
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'flex-start',
@@ -176,10 +213,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  pickerLabel: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  picker: {
+    width: 300,
+    height: 50,
+    backgroundColor: '#fff',
+    marginBottom: 20,
+  },
   buttonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 30, // Add space at the top
+    marginTop: 30,
+    marginBottom:40,
   },
   startButton: {
     backgroundColor: '#fff',
@@ -190,7 +240,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    marginBottom: 20, // Add space between buttons
+    marginBottom: 20,
   },
   stopButton: {
     backgroundColor: '#ff5252',
@@ -201,7 +251,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    marginBottom: 20, // Add space between buttons
+    marginBottom: 20,
+    paddingBottom:50,
   },
   buttonText: {
     fontSize: 20,
@@ -209,4 +260,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
