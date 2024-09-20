@@ -45,6 +45,7 @@ const Meditation: React.FC = () => {
       }, 1000);
     } else if (countdown === 0) {
       handleStartMeditation();
+      // playBinauralBeats();
     }
     return () => clearTimeout(countdownTimer);
   }, [countdown, isCountingDown]);
@@ -52,7 +53,7 @@ const Meditation: React.FC = () => {
   // Function to play binaural beats
   const playBinauralBeats = () => {
     // Call the native function to start playing the binaural beats
-    BinauralBeats.playBinauralBeats(100); // Base frequency 440 Hz, beat frequency 4 Hz
+    BinauralBeats.playBinauralBeats(100,4,3600); // Base frequency 440 Hz, beat frequency 4 Hz
   };
 
   // Function to stop binaural beats
@@ -132,8 +133,8 @@ const Meditation: React.FC = () => {
               <TouchableOpacity onPress={handleStart} style={styles.startButton}>
                 <Text style={styles.buttonText}>Start Meditation</Text>
               </TouchableOpacity>
-              <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
-              <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} />
+              {/* <Button title="Play Binaural Beats" onPress={playBinauralBeats} />
+              <Button title="Stop Binaural Beats" onPress={stopBinauralBeats} /> */}
 
             </View>
           )}

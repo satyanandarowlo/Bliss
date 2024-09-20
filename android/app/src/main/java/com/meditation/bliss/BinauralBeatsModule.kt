@@ -7,35 +7,33 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import kotlin.concurrent.thread
+import kotlin.math.PI
+import kotlin.math.sin
 
 class BinauralBeatsModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
     private var audioTrack: AudioTrack? = null
-    private var isPlaying = false
 
     override fun getName(): String {
         return "BinauralBeats"
     }
 
     @ReactMethod
-    fun playBinauralBeats(baseFrequency: Double) {
+    fun playBinauralBeats(baseFrequency: Double, beatFrequency: Double, duration: Int) { // duration is now Int
         thread {
             val sampleRate = 44100
-            val duration = 10 // seconds
-            var beatFrequency = 4.0
-
-            val numSamples = duration * sampleRate
+            val numSamples = duration * sampleRate // No need to convert, duration is now Int
 
             // Stereo output - each short value holds left and right channels
             val buffer = ShortArray(numSamples * 2) // Multiply by 2 for stereo (Left + Right)
 
             for (i in 0 until numSamples) {
                 // Left channel (base frequency)
-                val leftSample = Math.sin(2 * Math.PI * i / (sampleRate / baseFrequency))
+                val leftSample = sin(2 * PI * i / (sampleRate / baseFrequency))
 
                 // Right channel (base frequency + beat frequency)
-                val rightSample = Math.sin(2 * Math.PI * i / (sampleRate / (baseFrequency + beatFrequency)))
+                val rightSample = sin(2 * PI * i / (sampleRate / (baseFrequency + beatFrequency)))
 
                 // Fill buffer - alternating left and right channels
                 buffer[i * 2] = (leftSample * Short.MAX_VALUE).toInt().toShort()  // Left channel
@@ -47,7 +45,7 @@ class BinauralBeatsModule(reactContext: ReactApplicationContext) :
                 sampleRate,
                 AudioFormat.CHANNEL_OUT_STEREO,  // Ensure stereo output
                 AudioFormat.ENCODING_PCM_16BIT,
-                buffer.size * 2,  // 2 bytes per sample
+                buffer.size,  // buffer.size is the correct number of samples, no need to multiply by 2
                 AudioTrack.MODE_STATIC
             )
 
