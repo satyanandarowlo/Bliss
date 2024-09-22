@@ -41,8 +41,22 @@ const Meditation: React.FC = () => {
         // seaAudio.play();
         console.log("Sea sound loaded successfully, ready to play.");
       }
+      console.log("out of error or success code for sea audio");
     })
   ).current;
+
+  // Function to play the sea sound and detect when it finishes
+const playSeaSound = () => {
+  seaAudio.play((success) => {
+    if (!success) {
+      console.error("Playback failed due to audio decoding errors.");
+    } else {
+      console.log("Sea sound finished playing.");
+      // Replay the sea sound if needed
+      playSeaSound(); // This will keep it looping manually if necessary
+    }
+  });
+};
 
   // Prevent the screen from locking during the session
   useEffect(() => {
@@ -88,9 +102,10 @@ const Meditation: React.FC = () => {
     console.log("playing sea sound");
     // seaAudio.setCurrentTime(0);
     // seaAudio.setNumberOfLoops(2);
-    seaAudio.setNumberOfLoops(-1); // Loop infinitely
-    seaAudio.setCurrentTime(0); // Start from the beginning  
-    seaAudio.play(); // Start playing the sea sound in loop
+    // seaAudio.setNumberOfLoops(-1); // Loop infinitely
+    // seaAudio.setCurrentTime(0); // Start from the beginning  
+    // seaAudio.play(); // Start playing the sea sound in loop
+    playSeaSound();
     playBinauralBeats(); // Start the binaural beats
     timeoutRef.current = setTimeout(playBellSoundAndIncreaseDelay, delay); // Start the bell sound and delay cycle
   }; 
@@ -118,7 +133,9 @@ const Meditation: React.FC = () => {
   const handleStop = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current); // Clear any ongoing timeouts
     bellAudio.stop(); // Stop bell sound
-    seaAudio.stop(); // Stop sea sound
+    seaAudio.stop(() => {
+      seaAudio.release(); // Release sea sound resources after stopping
+    });
     stopBinauralBeats(); // Stop binaural beats
     setStarted(false);
     setIsCountingDown(false);
