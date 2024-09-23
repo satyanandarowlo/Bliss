@@ -15,6 +15,7 @@ const BellPlayer: React.FC<BellPlayerProps> = ({ started }) => {
       if (error) {
         console.error('Failed to load bell sound', error);
       }
+      console.log("now playing bell");
     })
   ).current;
 

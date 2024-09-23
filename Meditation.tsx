@@ -5,11 +5,13 @@ import MeditationDuration from './MeditationDuration';
 import BellPlayer from './BellPlayer';
 import CountdownTimer from './CountdownTimer';
 import BinauralBeatsControl from './BinauralBeatsControl';
+import BackgroundEffectPlayer from './BackgroundEffectPlayer';
 
 const Meditation: React.FC = () => {
   const [started, setStarted] = useState<boolean>(false);
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
   const [countdownFinished, setCountdownFinished] = useState<boolean>(false);
+  const [soundSelection, setSoundSelection] = useState<'ocean' | 'birds' | 'rain'>('ocean');
 
   // Handle countdown finish
   const onCountdownFinish = () => {
@@ -43,6 +45,7 @@ const Meditation: React.FC = () => {
               <View style={styles.meditationInfo}>
                 <MeditationDuration started={started} />
                 <BellPlayer started={started} />
+                <BackgroundEffectPlayer started={started} />
                 <BinauralBeatsControl started={started} baseFrequency={100} beatFrequency={4} duration={4000} />
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity onPress={handleStop} style={styles.stopButton}>
