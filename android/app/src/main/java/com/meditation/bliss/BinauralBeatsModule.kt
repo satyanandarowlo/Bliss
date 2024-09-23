@@ -21,7 +21,7 @@ class BinauralBeatsModule(reactContext: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun playBinauralBeats(baseFrequency: Double, beatFrequency: Double, duration: Int) { // Duration is in seconds
+    fun playBinauralBeats(baseFrequency: Double, beatFrequency: Double, duration: Int, volume: Float) { // Duration is in seconds, volume as float
         thread {
             val sampleRate = 44100
             val chunkDuration = 5 // Process audio in 5-second chunks
@@ -46,6 +46,7 @@ class BinauralBeatsModule(reactContext: ReactApplicationContext) :
                 .setBufferSizeInBytes(buffer.size)
                 .build()
 
+            audioTrack?.setVolume(volume)
             audioTrack?.play()
             isPlaying = true
 
@@ -73,6 +74,11 @@ class BinauralBeatsModule(reactContext: ReactApplicationContext) :
 
             stopBinauralBeats() // Stop after the full duration
         }
+    }
+
+    @ReactMethod
+    fun setVolume(volume: Float) {
+        audioTrack?.setVolume(volume)
     }
 
     @ReactMethod
