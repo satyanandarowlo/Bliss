@@ -18,28 +18,28 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      {!user ? (
-        <AuthForm />
-      ) : (
-        // Show authentication form if not logged in
-        <>
-          <Button title="Logout" onPress={signOut} />
-          {/* Add Logout button */}
-          {/* <View/> */}
-          <SafeAreaView style={styles.container}>
-            <ScrollView>
-              <ErrorBoundary>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <ErrorBoundary>
+          <View style={styles.container}>
+            {!user ? (
+              <AuthForm />
+            ) : (
+              // Show authentication form if not logged in
+              <>
+                <Button title="Logout" onPress={signOut} />
+                {/* Add Logout button */}
+                {/* <View/> */}
                 <Meditation />
-                <ErrorLogger />
-              </ErrorBoundary>
-            </ScrollView>
-          </SafeAreaView>
+                {/* Show meditation section */}
+              </>
+            )}
+          </View>
 
-          {/* Show meditation section */}
-        </>
-      )}
-    </View>
+          <ErrorLogger />
+        </ErrorBoundary>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

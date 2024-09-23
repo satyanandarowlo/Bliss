@@ -14,20 +14,25 @@ const BackgroundEffectPlayer: React.FC<BackgroundEffectPlayerProps> = ({
   const soundRef = useRef<Sound | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Function to gradually reduce the volume over 10 minutes
-  const fadeOutVolume = () => {
-    let volume = 1.0; // Start at 100% volume
-    const fadeDuration = 600; // 600 seconds (10 minutes)
-    const fadeStep = 1 / fadeDuration; // Amount to reduce volume by each second
+  // Function to gradually reduce the volume
+  const fadeOutVolume = (
+    initialVolume: number,
+    fadeDuration: number, // Duration in seconds
+    threshold: number, // Final volume (e.g., 0.3 for 30%)
+  ) => {
+    let volume = initialVolume;
+    const fadeStep = (initialVolume - threshold) / fadeDuration; // Amount to reduce volume by each second
 
     intervalRef.current = setInterval(() => {
       volume -= fadeStep;
-      if (soundRef.current && volume > 0) {
+      if (soundRef.current && volume > threshold) {
         soundRef.current.setVolume(volume);
       } else {
-        // Clear interval and stop when volume reaches 0
+        // Clear interval when it reaches the threshold
         if (intervalRef.current) clearInterval(intervalRef.current);
-        if (soundRef.current) soundRef.current.stop();
+        if (soundRef.current) {
+          soundRef.current.setVolume(threshold); // Set to final threshold volume
+        }
       }
     }, 1000); // Adjust the volume every second
   };
@@ -49,7 +54,8 @@ const BackgroundEffectPlayer: React.FC<BackgroundEffectPlayerProps> = ({
               console.log('Sound playback failed');
             }
           });
-          fadeOutVolume(); // Start the volume fade-out
+          // Start the volume fade-out with initial volume of 1.0, duration of 600 seconds (10 mins), and final volume threshold of 0.3
+          fadeOutVolume(1.0, 600, 0.3);
         },
       );
     } else {
